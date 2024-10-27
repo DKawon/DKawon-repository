@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalkulator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .calculator {
+            width: 300px;
+            padding: 20px;
+            border: 2px solid #333;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0px 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .display {
+            font-size: 24px;
+            margin-bottom: 20px;
+            padding: 10px;
+            width: calc(100% - 20px);
+            border: 1px solid #333;
+            border-radius: 5px;
+            text-align: right;
+        }
+
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+
+        .button {
+            font-size: 20px;
+            padding: 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .button.operation {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .button.equals {
+            background-color: #28a745;
+            color: white;
+            grid-column: span 2;
+        }
+
+        .button.clear {
+            background-color: #dc3545;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator">
+        <input type="text" class="display" id="display" disabled>
+        <div class="buttons">
+            <button class="button" onclick="appendNumber('7')">7</button>
+            <button class="button" onclick="appendNumber('8')">8</button>
+            <button class="button" onclick="appendNumber('9')">9</button>
+            <button class="button operation" onclick="chooseOperation('add')">+</button>
+
+            <button class="button" onclick="appendNumber('4')">4</button>
+            <button class="button" onclick="appendNumber('5')">5</button>
+            <button class="button" onclick="appendNumber('6')">6</button>
+            <button class="button operation" onclick="chooseOperation('subtract')">-</button>
+
+            <button class="button" onclick="appendNumber('1')">1</button>
+            <button class="button" onclick="appendNumber('2')">2</button>
+            <button class="button" onclick="appendNumber('3')">3</button>
+            <button class="button operation" onclick="chooseOperation('multiply')">×</button>
+
+            <button class="button clear" onclick="clearDisplay()">C</button>
+            <button class="button" onclick="appendNumber('0')">0</button>
+            <button class="button equals" onclick="calculate()">=</button>
+            <button class="button operation" onclick="chooseOperation('divide')">÷</button>
+        </div>
+    </div>
+
+    <script>
+        // Zmienne globalne
+        let currentNumber = '';
+        let previousNumber = '';
+        let operation = null;
+
+        // Funkcja dodająca liczbę do wyświetlacza
+        function appendNumber(number) {
+            currentNumber += number;
+            updateDisplay();
+        }
+        // Funkcja wybierająca operację
+        function chooseOperation(selectedOperation) {
+            if (currentNumber === '') return;
+            if (previousNumber !== '') calculate();
+            operation = selectedOperation;
+            previousNumber = currentNumber;
+            currentNumber = '';
+        }
+        // Funkcja wykonująca wybraną operację
+        function calculate() { // Obliczenia
+            let result;
+            const prev = parseFloat(previousNumber);
+            const current = parseFloat(currentNumber);
+            if (isNaN(prev) || isNaN(current)) return;
+
+            switch (operation) {
+                case 'add':
+                    result = prev + current;
+                    break;
+                case 'subtract':
+                    result = prev - current;
+                    break;
+                case 'multiply':
+                    result = prev * current;
+                    break;
+                case 'divide':
+                    // Obsługa błędu dzielenia przez zero
+                    if (current === 0) {
+                        alert("Nie można dzielić przez zero");
+                        clearDisplay();
+                        return;
+                    }
+                    result = prev / current;
+                    break;
+                default:
+                    return;
+            }
+
+            currentNumber = result.toString();
+            operation = null;
+            previousNumber = '';
+            updateDisplay();
+        }
+        // Funkcja czyszcząca wyświetlacz
+        function clearDisplay() {
+            currentNumber = '';
+            previousNumber = '';
+            operation = null;
+            updateDisplay();
+        }
+        // Funkcja aktualizująca wyświetlacz
+        function updateDisplay() {
+            document.getElementById('display').value = currentNumber;
+        }
+    </script>
+</body>
+</html>
