@@ -9,6 +9,7 @@
 <body>
     <div class="calculator">
         <input type="text" id="display" disabled>
+
         <div class="buttons">
             <button onclick="appendValue('1')">1</button>
             <button onclick="appendValue('2')">2</button>
@@ -20,78 +21,104 @@
             <button onclick="appendValue('8')">8</button>
             <button onclick="appendValue('9')">9</button>
             <button onclick="appendValue('0')">0</button>
-            <button onclick="setOperation('-')">-</button>
+            <button onclick="appendValue('.')">.</button>
             <button onclick="setOperation('+')">+</button>
+            <button onclick="setOperation('-')">-</button>
             <button onclick="setOperation('*')">*</button>
             <button onclick="setOperation('/')">/</button>
             <button onclick="setOperation('^')">^</button>
             <button onclick="calculateResult()">=</button>
             <button onclick="clearDisplay()">C</button>
-            <button onclick="clearDisplay()">nic</button>
+            <button onclick="toggleHistory()">H</button>
         </div>
+
+        <div class="history" id="history"></div>
     </div>
 
-    <script>let currentInput = '';
+    <script>
+        let currentInput = '';
         let operation = '';
         let firstNumber = '';
-        let secondNumber = '';
-        
+        const history = [];
+
+        const display = document.getElementById('display');
+        const historyContainer = document.getElementById('history');
+
         function appendValue(value) {
+            if (value === '.' && currentInput.includes('.')) return;
             currentInput += value;
-            document.getElementById('display').value = currentInput;
+            display.value = currentInput;
         }
-        
+
         function setOperation(op) {
-            if (currentInput === '') return; // Nie wykonuj operacji, jeśli pole jest puste
+            if (currentInput === '') return;
             firstNumber = currentInput;
             operation = op;
             currentInput = '';
-            document.getElementById('display').value = '';
+            display.value = '';
         }
-        
+
         function calculateResult() {
             if (currentInput === '' || firstNumber === '') return;
-            
-            secondNumber = currentInput;
-            let result = 0;
-        
+
+            const secondNumber = currentInput;
+            let result;
+
+            const a = parseFloat(firstNumber);
+            const b = parseFloat(secondNumber);
+
             switch (operation) {
-                case '+':
-                    result = parseFloat(firstNumber) + parseFloat(secondNumber);
-                    break;
-                case '-':
-                    result = parseFloat(firstNumber) - parseFloat(secondNumber);
-                    break;
-                case '*':
-                    result = parseFloat(firstNumber) * parseFloat(secondNumber);
-                    break;
+                case '+': result = a + b; break;
+                case '-': result = a - b; break;
+                case '*': result = a * b; break;
                 case '/':
-                    if (secondNumber === '0') {
+                    if (b === 0) {
                         alert('Nie można dzielić przez 0');
                         return;
                     }
-                    result = parseFloat(firstNumber) / parseFloat(secondNumber);
+                    result = a / b;
                     break;
-                case '^':
-                    result = Math.pow(parseFloat(firstNumber), parseFloat(secondNumber));
-                    break;
-                default:
-                    return;
+                case '^': result = Math.pow(a, b); break;
+                default: return;
             }
-            
-            document.getElementById('display').value = result;
+
+            const equation = `${a} ${operation} ${b} = ${result}`;
+            history.push(equation);
+            updateHistory();
+
+            display.value = result;
             currentInput = result.toString();
             firstNumber = '';
             operation = '';
         }
-        
+
         function clearDisplay() {
             currentInput = '';
             firstNumber = '';
-            secondNumber = '';
             operation = '';
-            document.getElementById('display').value = '';
+            display.value = '';
         }
-        </script>
+
+        function toggleHistory() {
+            historyContainer.classList.toggle('show');
+        }
+
+        function updateHistory() {
+            historyContainer.innerHTML = '<h3>Historia</h3>';
+            history.slice().reverse().forEach(entry => {
+                const item = document.createElement('div');
+                item.textContent = entry;
+                historyContainer.appendChild(item);
+            });
+        }
+
+        document.addEventListener('keydown', function(e) {
+            const key = e.key;
+            if (!isNaN(key) || key === '.') appendValue(key);
+            if (['+', '-', '*', '/', '^'].includes(key)) setOperation(key);
+            if (key === 'Enter') calculateResult();
+            if (key === 'Escape' || key === 'c') clearDisplay();
+        });
+    </script>
 </body>
 </html>
