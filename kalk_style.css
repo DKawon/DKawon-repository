@@ -53,7 +53,6 @@ body {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-/* Style dla różnych typów przycisków */
 .buttons button:nth-child(-n+10) { /* Cyfry 0-9 */
     background: #ffffff;
     font-weight: bold;
@@ -219,7 +218,6 @@ body {
     background: #d0eaff;
 }
 
-/* Tryb ciemny */
 body.dark-mode {
     background: linear-gradient(135deg, #2c3e50, #1a252f);
 }
@@ -329,7 +327,6 @@ body.dark-mode {
     background: #4a6fa5;
 }
 
-/* Responsywność */
 @media (max-width: 400px) {
     .calculator {
         width: 300px;
