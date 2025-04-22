@@ -10,10 +10,8 @@
     <div class="calculator">
         <input type="text" id="display" disabled>
 
-        <!-- Przycisk przełączania trybu -->
         <button class="mode-toggle" onclick="toggleMode()">Przełącz na konwersję jednostek</button>
 
-        <!-- Sekcja kalkulatora -->
         <div class="calc-mode" id="calcMode">
             <div class="buttons">
                 <button onclick="appendValue('1')">1</button>
@@ -52,7 +50,6 @@
             </div>
         </div>
 
-        <!-- Sekcja konwersji jednostek -->
         <div class="unit-mode" id="unitMode" style="display: none;">
             <div class="unit-selection">
                 <select id="conversionType" onchange="updateUnitOptions()">
@@ -74,7 +71,6 @@
         <div class="history" id="history"></div>
     </div>
 
-    <!-- math.js z CDN -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.8.0/math.min.js"></script>
     <script src="kalk_script.js"></script>
 </body>
