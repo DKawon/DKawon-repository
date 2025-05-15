@@ -14,7 +14,7 @@ Responsywny interfejs z trybem ciemnym i historią obliczeń.
 
 Instalacja:
 
-Sklonuj repozytorium:git clone https://https://github.com/DKawon/DKawon-repository.git
+Sklonuj repozytorium:git clone https://github.com/DKawon/DKawon-repository?tab=readme-ov-file
 
 Otwórz index.html w przeglądarce.
 
