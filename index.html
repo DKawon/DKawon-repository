@@ -1,77 +1,141 @@
 <!DOCTYPE html>
 <html lang="pl">
 <head>
+    <!-- Definicja kodowania i responsywności -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kalkulator</title>
+    <title>Kalkulator Naukowy</title>
     <link rel="stylesheet" href="kalk_style.css">
+    <!-- Biblioteka math.js do obliczeń matematycznych -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/10.6.4/math.min.js"></script>
 </head>
 <body>
-    <div class="calculator">
-        <input type="text" id="display" disabled>
-
-        <button class="mode-toggle" onclick="toggleMode()">Przełącz na konwersję jednostek</button>
-
-        <div class="calc-mode" id="calcMode">
-            <div class="buttons">
-                <button onclick="appendValue('1')">1</button>
-                <button onclick="appendValue('2')">2</button>
-                <button onclick="appendValue('3')">3</button>
-                <button onclick="appendValue('4')">4</button>
-                <button onclick="appendValue('5')">5</button>
-                <button onclick="appendValue('6')">6</button>
-                <button onclick="appendValue('7')">7</button>
-                <button onclick="appendValue('8')">8</button>
-                <button onclick="appendValue('9')">9</button>
-                <button onclick="appendValue('0')">0</button>
-                <button onclick="appendValue('.')">.</button>
-                <button onclick="appendValue('(')">(</button>
-                <button onclick="appendValue(')')">)</button>
-                <button onclick="appendValue('+')">+</button>
-                <button onclick="appendValue('-')">-</button>
-                <button onclick="appendValue('*')">*</button>
-                <button onclick="appendValue('/')">/</button>
-                <button onclick="appendValue('^')">^</button>
-                <button onclick="appendValue('sqrt(')">√</button>
-                <button onclick="appendValue('sin(')">sin</button>
-                <button onclick="appendValue('cos(')">cos</button>
-                <button onclick="appendValue('tan(')">tg</button>
-                <button onclick="appendValue('ln(')">ln</button>
-                <button onclick="appendValue('log(')">log</button>
-                <button onclick="appendValue('pi')">π</button>
-                <button onclick="appendValue('e')">e</button>
-                <button onclick="appendValue('!')">!</button>
-                <button onclick="appendValue('%')">%</button>
-                <button onclick="calculateResult()">=</button>
-                <button onclick="clearDisplay()">C</button>
-                <button onclick="deleteLastChar()">←</button>
-                <button onclick="toggleHistory()">H</button>
-                <button onclick="toggleTheme()">🌓</button>
-            </div>
-        </div>
-
-        <div class="unit-mode" id="unitMode" style="display: none;">
-            <div class="unit-selection">
-                <select id="conversionType" onchange="updateUnitOptions()">
-                    <option value="length">Długość</option>
-                    <option value="mass">Masa</option>
-                    <option value="temperature">Temperatura</option>
-                    <option value="volume">Objętość</option>
-                </select>
-                <div class="unit-inputs">
-                    <input type="number" id="unitInput" placeholder="Wprowadź wartość">
-                    <select id="unitFrom"></select>
-                    <span>→</span>
-                    <select id="unitTo"></select>
+    <!-- Główny kontener aplikacji -->
+    <div class="container">
+        <!-- Kalkulator z możliwością przeciągania -->
+        <div class="calculator draggable" id="calculator">
+            <div class="drag-handle">☰ Przeciągnij</div>
+            <!-- Wybór motywu kolorystycznego -->
+            <select id="themeSelect" onchange="setTheme(this.value)">
+                <option value="light">Motyw Jasny</option>
+                <option value="dark">Motyw Ciemny</option>
+                <option value="ocean">Motyw Oceaniczny</option>
+                <option value="sunny">Motyw Słoneczny</option>
+                <option value="space">Motyw Kosmiczny</option>
+                <option value="forest">Motyw Leśny</option>
+            </select>
+            <!-- Wyświetlacz wyniku -->
+            <input type="text" id="display" readonly>
+            
+            <!-- Tryb kalkulatora -->
+            <div id="calcMode">
+                <div class="buttons">
+                    <button onclick="appendValue('1')" title="Cyfra 1">1</button>
+                    <button onclick="appendValue('2')" title="Cyfra 2">2</button>
+                    <button onclick="appendValue('3')" title="Cyfra 3">3</button>
+                    <button onclick="appendValue('4')" title="Cyfra 4">4</button>
+                    <button onclick="appendValue('5')" title="Cyfra 5">5</button>
+                    <button onclick="appendValue('6')" title="Cyfra 6">6</button>
+                    <button onclick="appendValue('7')" title="Cyfra 7">7</button>
+                    <button onclick="appendValue('8')" title="Cyfra 8">8</button>
+                    <button onclick="appendValue('9')" title="Cyfra 9">9</button>
+                    <button onclick="appendValue('0')" title="Cyfra 0">0</button>
+                    <button onclick="appendValue('.')" title="Kropka dziesiętna">.</button>
+                    <button onclick="appendValue('(')" title="Otwórz nawias">(</button>
+                    <button onclick="appendValue(')')" title="Zamknij nawias">)</button>
+                    <button onclick="appendValue('+')" title="Dodawanie">+</button>
+                    <button onclick="appendValue('-')" title="Odejmowanie">-</button>
+                    <button onclick="appendValue('*')" title="Mnożenie">*</button>
+                    <button onclick="appendValue('/')" title="Dzielenie">/</button>
+                    <button onclick="appendValue('^')" title="Potęgowanie">^</button>
+                    <button onclick="appendValue('sqrt(')" title="Pierwiastek kwadratowy">√</button>
+                    <button onclick="appendValue('sin(')" title="Sinus">sin</button>
+                    <button onclick="appendValue('cos(')" title="Cosinus">cos</button>
+                    <button onclick="appendValue('tan(')" title="Tangens">tg</button>
+                    <button onclick="appendValue('ln(')" title="Logarytm naturalny">ln</button>
+                    <button onclick="appendValue('log(')" title="Logarytm dziesiętny">log</button>
+                    <button onclick="appendValue('pi')" title="Liczba Pi">π</button>
+                    <button onclick="appendValue('e')" title="Liczba e">e</button>
+                    <button onclick="appendValue('!')" title="Silnia">!</button>
+                    <button onclick="appendValue('%')" title="Procent">%</button>
+                    <button onclick="calculateResult()" title="Oblicz wynik">=</button>
+                    <button onclick="clearDisplay()" title="Wyczyść ekran">C</button>
+                    <button onclick="deleteLastChar()" title="Usuń ostatni znak">←</button>
                 </div>
-                <button onclick="convertUnits()">Konwertuj</button>
+            </div>
+
+            <!-- Tryb konwersji jednostek -->
+            <div id="unitMode" style="display: none;">
+                <div class="unit-selection">
+                    <select id="conversionType" onchange="updateUnitOptions()">
+                        <option value="length">Długość</option>
+                        <option value="mass">Masa</option>
+                        <option value="temperature">Temperatura</option>
+                        <option value="volume">Objętość</option>
+                    </select>
+                    <div class="unit-inputs" title="Wprowadź wartość do konwersji">
+                        <input type="number" id="unitInput" placeholder="Wartość">
+                        <select id="unitFrom"></select>
+                        <span>→</span>
+                        <select id="unitTo"></select>
+                    </div>
+                    <button onclick="convertUnits()" title="Wykonaj konwersję">Konwertuj</button>
+                </div>
+            </div>
+
+            <!-- Historia obliczeń -->
+            <div id="history" class="history"></div>
+
+            <!-- Modal z instrukcją -->
+            <div id="instructionsModal" class="modal" style="display: none;">
+                <div class="modal-content">
+                    <span class="close" onclick="document.getElementById('instructionsModal').style.display='none'">×</span>
+                    <h2>Instrukcja obsługi kalkulatora</h2>
+                    <p><strong>Tryb kalkulatora:</strong></p>
+                    <ul>
+                        <li>Używaj przycisków cyfr (0-9) i kropki (.) do wprowadzania liczb.</li>
+                        <li>Operatory (+, -, *, /, ^) służą do dodawania, odejmowania, mnożenia, dzielenia i potęgowania.</li>
+                        <li>Funkcje (sin, cos, tg, ln, log, √) wykonują operacje matematyczne; wpisz je przed liczbą, np. sin(30).</li>
+                        <li>Stałe (π, e) wstawiają wartości matematyczne.</li>
+                        <li>Silnia (!) i procent (%) działają na wprowadzone liczby.</li>
+                        <li>Przycisk "=" oblicza wynik, "C" czyści ekran, "←" usuwa ostatni znak.</li>
+                        <li>Możesz używać klawiatury: cyfry, operatory, Enter (oblicz), Backspace (usuń), Esc (wyczyść).</li>
+                    </ul>
+                    <p><strong>Tryb konwersji jednostek:</strong></p>
+                    <ul>
+                        <li>Wybierz typ konwersji (długość, masa, temperatura, objętość).</li>
+                        <li>Wpisz wartość i wybierz jednostki źródłową oraz docelową.</li>
+                        <li>Kliknij "Konwertuj", aby zobaczyć wynik.</li>
+                    </ul>
+                    <p><strong>Motywy:</strong> Wybierz motyw kolorystyczny z listy rozwijanej lub z panelu bocznego.</p>
+                    <p><strong>Notatki:</strong> Zapisz ważne obliczenia lub uwagi w sekcji notatek w panelu bocznym.</p>
+                    <p><strong>Przeciąganie:</strong> Chwyć za pasek "Przeciągnij" u góry kalkulatora lub panelu bocznego, aby przesunąć je po ekranie.</p>
+                    <p><strong>Podpowiedzi:</strong> Najedź kursorem na przyciski, aby zobaczyć ich opis.</p>
+                </div>
+            </div>
+
+            <!-- Modal z notatkami -->
+            <div id="notesModal" class="modal" style="display: none;">
+                <div class="modal-content">
+                    <span class="close" onclick="document.getElementById('notesModal').style.display='none'">×</span>
+                    <h2>Notatki</h2>
+                    <textarea id="noteInput" placeholder="Wpisz notatkę..." rows="4" style="width: 100%;"></textarea>
+                    <button onclick="saveNote()" style="margin-top: 10px;">Zapisz</button>
+                    <div id="notesList" style="margin-top: 15px; max-height: 200px; overflow-y: auto;"></div>
+                </div>
             </div>
         </div>
 
-        <div class="history" id="history"></div>
+        <!-- Panel boczny z przyciskami -->
+        <div class="sidebar draggable" id="sidebar">
+            <div class="drag-handle">☰ Przeciągnij</div>
+            <button class="sidebar-button" onclick="showInstructions()" title="Pokaż instrukcję obsługi"><span>ℹ️</span> Instrukcja</button>
+            <button class="sidebar-button" onclick="document.getElementById('themeSelect').focus()" title="Wybierz motyw kolorystyczny"><span>🎨</span> Motywy</button>
+            <button class="sidebar-button" id="toggleHistoryButton" onclick="toggleHistory()" title="Pokaż/ukryj historię obliczeń"><span>📜</span> Historia</button>
+            <button class="sidebar-button" id="toggleModeButton" onclick="toggleMode()" title="Przełącz na konwerter jednostek"><span>🔄</span> Konwerter</button>
+            <button class="sidebar-button" onclick="showNotesModal()" title="Zapisz lub przeglądaj notatki"><span>📝</span> Notatki</button>
+        </div>
     </div>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.8.0/math.min.js"></script>
     <script src="kalk_script.js"></script>
 </body>
 </html>
