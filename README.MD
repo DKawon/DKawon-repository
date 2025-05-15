@@ -18,7 +18,7 @@ Sklonuj repozytorium:git clone https://github.com/DKawon/DKawon-repository?tab=r
 
 Otwórz index.html w przeglądarce.
 
-Uwaga: Wymaga połączenia z internetem dla math.js (CDN). Dla trybu offline pobierz math.min.js.
+Uwaga: Wymaga połączenia z internetem dla math.js (CDN).
 
 
 Licencja:
